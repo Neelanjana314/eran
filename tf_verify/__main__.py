@@ -1237,6 +1237,7 @@ elif config.spatial:
     print(f'analysis precision {verified_images} / {correctly_classified_images}')
 
 else:
+    total_time=0
     target = []
     if config.target != None:
         targetfile = open(config.target, 'r')
@@ -1403,8 +1404,16 @@ else:
                 
                 end = time.time()
                 print(end - start, "seconds")
+                duration=end - start
+                total_time=total_time+duration
+                
         else:
             if domain != "gpupoly" and domain!= "refinegpupoly":
                 print("img",i,"not considered, correct_label", int(test[0]), "classified label ", label)
-
+    print('total time: ',total_time,' seconds')
     print('analysis precision ',verified_images,'/ ', correctly_classified_images)
+	
+    from scipy.io import savemat
+    fname= "../CAV2021/results_eran_"+domain+"_"+str(round(epsilon,2))+".mat"
+    results = {"epsilon":epsilon,"VT": total_time,"rb":verified_images/correctly_classified_images}
+    savemat(fname,results)
